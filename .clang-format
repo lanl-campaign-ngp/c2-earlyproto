@@ -37,7 +37,7 @@ IncludeCategories:
   - Regex:           '^<.*\.h>'
     Priority:        3
   - Regex:           '^<.*'
-    Priority:        2
+    Priority:        3
   - Regex:           '.*'
     Priority:        1
 ...
