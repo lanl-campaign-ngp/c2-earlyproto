@@ -1,7 +1,6 @@
 /*
- * Copyright (c) 2021 Triad National Security, LLC, as operator of
- *     Los Alamos National Laboratory.
- * All rights reserved.
+ * Copyright (c) 2021 Triad National Security, LLC, as operator of Los Alamos
+ * National Laboratory. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
