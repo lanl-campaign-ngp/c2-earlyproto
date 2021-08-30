@@ -43,10 +43,18 @@ class IO {
   IO() {}
   virtual ~IO();
 
-  // Return the default IO implementation for the current environment.
-  // Sophisticated users may want to create or compose their own IO
-  // implementations rather than relying on the result of this call. Result of
-  // this call belongs to C2 and should not be deleted.
+  // Return an IO implementation that performs sequential IO operations using
+  // standard OS calls such as open(), read(), write(), fsync(), and close(),
+  // and random read operations using pread(). Result of this call belongs to
+  // C2 and should not be deleted.
+  static IO* GetUnBuffered();
+
+  // Return the default IO implementation. Current default performs sequential
+  // IO using C buffered IO functions such as fopen(), fread(), fwrite(),
+  // fflush(), and fclose(), and random read operations using regular pread().
+  // Sophisticated clients may devise their own IO implementations rather than
+  // relying on this default. Result of this call belongs to C2 and should not
+  // be deleted.
   static IO* Default();
 
   // Create a WritableFile object that writes to a new file with the specified
@@ -81,6 +89,26 @@ class WritableFile {
   // No copying allowed
   void operator=(const WritableFile& file);
   WritableFile(const WritableFile&);
+};
+
+// An implementation of IO that forwards all calls to another IO implementation.
+// This implementation is useful to clients who wish to override only part of
+// the functionality of the other implementation.
+class IOWrapper : public IO {
+ public:
+  explicit IOWrapper(IO* t) : target_(t) {}
+  virtual ~IOWrapper();
+  // Return the target to which this Env forwards all calls
+  IO* target() const { return target_; }
+
+  virtual Status NewWritableFile(const char* f, WritableFile** r) {
+    return target_->NewWritableFile(f, r);
+  }
+
+  virtual Status CreateDir(const char* d) { return target_->CreateDir(d); }
+
+ private:
+  IO* target_;
 };
 
 }  // namespace c2

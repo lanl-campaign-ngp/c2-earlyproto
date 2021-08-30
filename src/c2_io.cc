@@ -36,6 +36,8 @@ namespace c2 {
 
 WritableFile::~WritableFile() {}
 
+IOWrapper::~IOWrapper() {}
+
 IO::~IO() {}
 
 }  // namespace c2

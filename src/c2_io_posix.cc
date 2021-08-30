@@ -69,6 +69,23 @@ class PosixIO : public IO {
   }
 };
 
+class PosixLibcBufferedIOWrapper : public IOWrapper {
+ public:
+  explicit PosixLibcBufferedIOWrapper(IO* base) : IOWrapper(base) {}
+  virtual ~PosixLibcBufferedIOWrapper() {}
+
+  virtual Status NewWritableFile(const char* fname, WritableFile** r) OVERRIDE {
+    FILE* f = fopen(fname, "w");
+    if (f != NULL) {
+      *r = new PosixBufferedWritableFile(fname, f);
+      return Status::OK();
+    } else {
+      *r = NULL;
+      return PosixError(fname, errno);
+    }
+  }
+};
+
 // Map integer errors to C2 status objects.
 Status PosixError(const Slice& err_context, int err_number) {
   switch (err_number) {
@@ -85,23 +102,37 @@ Status PosixError(const Slice& err_context, int err_number) {
 
 namespace {
 pthread_once_t once = PTHREAD_ONCE_INIT;
+IO* posix_io_buf = NULL;
 IO* posix_io = NULL;
 
 void OpenPosixIO() {
   IO* const base = new PosixIO;
+  posix_io_buf = new PosixLibcBufferedIOWrapper(base);
   posix_io = base;
 }
 
-IO* PosixGetDefaultIO() {
+IO* PosixGetBaseImplementation() {
   port::PthreadCall("pthread_once", pthread_once(&once, OpenPosixIO));
   return posix_io;
 }
+
+IO* PosixGetBuffered() {
+  port::PthreadCall("pthread_once", pthread_once(&once, OpenPosixIO));
+  return posix_io_buf;
+}
+
 }  // namespace
 
-// Return the default IO implementation for common use. The returned result
-// belongs to C2.
+// Return the base IO implementation that uses standard IO calls
+// provided by the OS. The returned result belongs to c2.
+IO* IO::GetUnBuffered() {
+  IO* result = PosixGetBaseImplementation();
+  return result;
+}
+
+// Return buffered IO. The returned result belongs to c2.
 IO* IO::Default() {
-  IO* result = PosixGetDefaultIO();
+  IO* result = PosixGetBuffered();
   return result;
 }
 
