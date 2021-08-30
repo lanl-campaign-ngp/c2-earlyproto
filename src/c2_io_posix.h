@@ -37,18 +37,18 @@
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
-
-namespace c2 {
-
-// Return errors as status objects.
-extern Status PosixError(const Slice& err_context, int err_number);
-
 #if !defined(__linux__)
-// Use regular buffered data output routines on non-Linux platforms
+// Use regular buffered IO routines on non-Linux platforms
 #define fwrite_unlocked fwrite
 #define fflush_unlocked fflush
 #define fdatasync fsync
 #endif
+
+namespace c2 {
+
+// Map standard POSIX errors as C2 status objects.
+extern Status PosixError(const Slice& err_context, int err_number);
+
 // C2 wrapper of an opened FILE object.
 class PosixBufferedWritableFile : public WritableFile {
  private:
@@ -102,7 +102,7 @@ class PosixBufferedWritableFile : public WritableFile {
   }
 };
 
-// C2 wrapper of an unbuffered plain OS file object.
+// C2 wrapper of a plain OS file descriptor.
 class PosixWritableFile : public WritableFile {
  private:
   std::string filename_;
