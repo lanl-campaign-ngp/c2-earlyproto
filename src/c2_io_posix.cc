@@ -66,6 +66,26 @@ class PosixIO : public IO {
     }
     return result;
   }
+
+  virtual Status GetTestDirectory(std::string* result) OVERRIDE {
+    const char* env = getenv("C2_TEST_TMPDIR");
+    if (env == NULL || env[0] == '\0') {
+      env = getenv("TEST_TMPDIR");
+    }
+    if (env == NULL || env[0] == '\0') {
+      char buf[100];
+      snprintf(buf, sizeof(buf), "/tmp/c2-test-%d",
+               static_cast<int>(geteuid()));
+      *result = buf;
+    } else {
+      *result = env;
+    }
+    Status status = CreateDir(result->c_str());
+    if (status.IsAlreadyExists()) {
+      status = Status::OK();
+    }
+    return status;
+  }
 };
 
 class PosixLibcBufferedIOWrapper : public IOWrapper {

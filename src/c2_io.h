@@ -66,6 +66,12 @@ class IO {
   // Create the specified directory.
   virtual Status CreateDir(const char* dir) = 0;
 
+  // Set *path to a temporary directory that can be used for testing. It may
+  // or many not have just been created. The directory may or may not differ
+  // between runs of the same process, but subsequent calls will return the
+  // same directory.
+  virtual Status GetTestDirectory(std::string* result) = 0;
+
  private:
   // No copying allowed
   void operator=(const IO& io);
@@ -105,6 +111,10 @@ class IOWrapper : public IO {
   }
 
   virtual Status CreateDir(const char* d) { return target_->CreateDir(d); }
+
+  virtual Status GetTestDirectory(std::string* path) {
+    return target_->GetTestDirectory(path);
+  }
 
  private:
   IO* target_;
