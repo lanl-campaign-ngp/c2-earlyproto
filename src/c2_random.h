@@ -41,7 +41,7 @@
 
 namespace c2 {
 // A simple, fast random number generator. Not good at generating truly random
-// bits, but good enough for code testing.
+// bits, but good enough for generating testing workloads.
 class Random {
  private:
   uint32_t seed_;
