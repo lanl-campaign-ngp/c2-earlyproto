@@ -29,43 +29,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma once
+#include "c2_index_builder.h"
 
-#include "c2_io.h"
+#include "testharness.h"
 
-#include <fastbit/ibin.h>
-#include <iostream>
+#include <fastbit/part.h>
 #include <vector>
+
 namespace c2 {
-
-struct IndexBuilderOptions {
-  IndexBuilderOptions() : ibis_col(NULL) {}
-  ibis::column* ibis_col;
-};
-
-class IndexBuilder : public ibis::bin {
+class IndexBuilderTest {
  public:
-  IndexBuilder(const IndexBuilderOptions& options, WritableFile* file);
-  ~IndexBuilder();
+  IndexBuilderOptions opts;
+  IndexBuilder* bu;
+  std::vector<float> inputdata;
+  std::string tmpdir;
 
-  template <typename T>
-  void TEST_BuildIndexes(const std::vector<T>& data);
-  void Reset() { clear(); }
-  Status Finish();
+  IndexBuilderTest() : bu(NULL) {
+    ibis::gVerbose = 5;
+    tmpdir = test::TmpDir() + "/index_builder_test";
+    IO::Default()->CreateDir(tmpdir.c_str());
+    opts.ibis_col =
+        new ibis::column(new ibis::part(tmpdir.c_str(), NULL, false),
+                         ibis::FLOAT, "var0", "test_var");
+    bu = new IndexBuilder(opts, NULL);
+  }
 
- private:
-  IndexBuilderOptions options_;
-  WritableFile* file_;
-
-  // No copying allowed
-  void operator=(const IndexBuilder& builder);
-  IndexBuilder(const IndexBuilder&);
+  ~IndexBuilderTest() {
+    delete opts.ibis_col->partition();
+    delete opts.ibis_col;
+    delete bu;
+  }
 };
 
-template <typename T>
-void IndexBuilder::TEST_BuildIndexes(const std::vector<T>& in) {
-  ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
-  construct(arr);
+TEST(IndexBuilderTest, Try) {
+  inputdata.push_back(1.0);
+  inputdata.push_back(1.7);
+  inputdata.push_back(1.3);
+  bu->TEST_BuildIndexes(inputdata);
+  bu->print(std::cerr);
 }
 
 }  // namespace c2
+
+int main(int argc, char* argv[]) {
+  return ::c2::test::RunAllTests(&argc, &argv);
+}
