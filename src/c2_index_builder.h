@@ -34,8 +34,8 @@
 #include "c2_io.h"
 
 #include <fastbit/ibin.h>
-#include <iostream>
 #include <vector>
+
 namespace c2 {
 
 struct IndexBuilderOptions {
