@@ -33,47 +33,23 @@
  */
 #pragma once
 
-#include "c2_io.h"
-
-#include <fastbit/ibin.h>
-#include <iostream>
-#include <vector>
+#include <fastbit/column.h>
+#include <string>
 
 namespace c2 {
 
-struct IndexBuilderOptions {
-  IndexBuilderOptions() : ibis_col(NULL) {}
-  ibis::column* ibis_col;
-};
-
-class IndexBuilder : public ibis::bin {
+class Column : public ibis::column {
  public:
-  IndexBuilder(const IndexBuilderOptions& options, WritableFile* file);
-  ~IndexBuilder();
+  ~Column();
 
   template <typename T>
-  void TEST_BuildIndexes(const std::vector<T>& data);
-  void Reset() { clear(); }
-  Status Finish();
+  int FetchData(ibis::array_t<T>* arr);
+  const std::string& name() const;
 
  private:
-  IndexBuilderOptions options_;
-  WritableFile* file_;
-
   // No copying allowed
-  void operator=(const IndexBuilder& builder);
-  IndexBuilder(const IndexBuilder&);
+  void operator=(const Column&);
+  Column(const Column&);
 };
-
-template <typename T>
-void IndexBuilder::TEST_BuildIndexes(const std::vector<T>& in) {
-  ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
-  //construct(arr);
-  granuleMap gmap;
-  mapGranules(arr, gmap);
- //printGranules(std::cerr, gmap);
-  convertGranules(gmap);
-  nrows = arr.size();
-}
 
 }  // namespace c2
