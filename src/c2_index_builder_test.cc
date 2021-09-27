@@ -33,6 +33,7 @@
  */
 #include "c2_index_builder.h"
 
+#include "c2_random.h"
 #include "testharness.h"
 
 #include <fastbit/part.h>
@@ -64,11 +65,12 @@ class IndexBuilderTest {
 };
 
 TEST(IndexBuilderTest, Try) {
-  inputdata.push_back(1.0);
-  inputdata.push_back(1.32);
-  inputdata.push_back(1.31);
-  inputdata.push_back(1.5);
-  inputdata.push_back(1.9);
+  Random r(301);
+  const int n = 10 * 1000 * 1000;
+  inputdata.reserve(n);
+  for (int i = 0; i < n; i++) {
+    inputdata.push_back(float(r.Uniform(n)) / float(10));
+  }
   bu->TEST_BuildIndexes(inputdata);
   bu->print(std::cerr);
 }
