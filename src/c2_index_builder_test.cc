@@ -40,14 +40,13 @@
 #include <vector>
 
 namespace c2 {
-class IndexBuilderTest {
+class IndexBuilderBench {
  public:
   IndexBuilderOptions opts;
   IndexBuilder* bu;
-  std::vector<float> inputdata;
   std::string tmpdir;
 
-  IndexBuilderTest() : bu(NULL) {
+  IndexBuilderBench() : bu(NULL) {
     ibis::gVerbose = 5;
     tmpdir = test::TmpDir() + "/index_builder_test";
     IO::Default()->CreateDir(tmpdir.c_str());
@@ -57,26 +56,51 @@ class IndexBuilderTest {
     bu = new IndexBuilder(opts, NULL);
   }
 
-  ~IndexBuilderTest() {
+  ~IndexBuilderBench() {
     delete opts.ibis_col->partition();
     delete opts.ibis_col;
     delete bu;
   }
 };
-
-TEST(IndexBuilderTest, Try) {
-  Random r(301);
-  const int n = 10 * 1000 * 1000;
-  inputdata.reserve(n);
-  for (int i = 0; i < n; i++) {
-    inputdata.push_back(float(r.Uniform(n)) / float(10));
-  }
-  bu->TEST_BuildIndexes(inputdata);
-  bu->print(std::cerr);
-}
-
 }  // namespace c2
 
+namespace {
+int FLAGS_n = 10000000;  // Number of keys
+
+int FLAGS_N = 39916801;  // Width of key space
+
+void BM_Main(int* const argc, char*** const argv) {
+  c2::IndexBuilderBench b;
+  c2::Random r(301);
+  std::vector<float> inputdata;
+  for (int i = 2; i < *argc; i++) {
+    int a;
+    char junk;
+    if (sscanf((*argv)[i], "--n=%d%c", &a, &junk) == 1) {
+      FLAGS_n = a;
+    } else if (sscanf((*argv)[i], "--N=%d%c", &a, &junk) == 1) {
+      FLAGS_N = a;
+    }
+  }
+  const int n = FLAGS_n;
+  inputdata.reserve(n);
+  for (int i = 0; i < n; i++) {
+    inputdata.push_back(float(r.Uniform(FLAGS_N)) / 10);
+  }
+  b.bu->TEST_BuildIndexes(inputdata);
+  b.bu->print(std::cerr);
+}
+}  // namespace
+
 int main(int argc, char* argv[]) {
-  return ::c2::test::RunAllTests(&argc, &argv);
+  c2::Slice token;
+  if (argc > 1) {
+    token = c2::Slice(argv[1]);
+  }
+  if (!token.starts_with("--bench")) {
+    return c2::test::RunAllTests(&argc, &argv);
+  } else {
+    BM_Main(&argc, &argv);
+    return 0;
+  }
 }
