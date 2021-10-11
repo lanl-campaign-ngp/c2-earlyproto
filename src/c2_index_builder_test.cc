@@ -33,10 +33,12 @@
  */
 #include "c2_index_builder.h"
 
+#include "c2_env.h"
 #include "c2_random.h"
 #include "testharness.h"
 
 #include <fastbit/part.h>
+#include <stdio.h>
 #include <vector>
 
 namespace c2 {
@@ -60,6 +62,24 @@ class IndexBuilderBench {
     delete opts.ibis_col->partition();
     delete opts.ibis_col;
     delete bu;
+  }
+
+  void Build(const std::vector<float>& inputdata) {
+    uint64_t begin = env::CurrentMicros();
+    bu->TEST_BuildIndexes(inputdata);
+    bu->print(std::cerr);
+    uint64_t d = env::CurrentMicros() - begin;
+    fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
+  }
+
+  void LessThan(float a) {
+    ibis::bitvector results;
+    ibis::qContinuousRange r("var0", ibis::qExpr::OP_LT, a);
+    uint64_t begin = env::CurrentMicros();
+    bu->evaluate(r, results);
+    uint64_t d = env::CurrentMicros() - begin;
+    fprintf(stderr, "== Query evaluated in %.3f s\n",
+            double(d) / 1000.0 / 1000.0);
   }
 };
 }  // namespace c2
@@ -87,8 +107,19 @@ void BM_Main(int* const argc, char*** const argv) {
   for (int i = 0; i < n; i++) {
     inputdata.push_back(float(r.Uniform(FLAGS_N)) / 10);
   }
-  b.bu->TEST_BuildIndexes(inputdata);
-  b.bu->print(std::cerr);
+  b.Build(inputdata);
+  b.LessThan(float(FLAGS_N) / 10 * 0.99);
+  b.LessThan(float(FLAGS_N) / 10 * 0.9);
+  b.LessThan(float(FLAGS_N) / 10 * 0.8);
+  b.LessThan(float(FLAGS_N) / 10 * 0.7);
+  b.LessThan(float(FLAGS_N) / 10 * 0.6);
+  b.LessThan(float(FLAGS_N) / 10 * 0.5);
+  b.LessThan(float(FLAGS_N) / 10 * 0.4);
+  b.LessThan(float(FLAGS_N) / 10 * 0.3);
+  b.LessThan(float(FLAGS_N) / 10 * 0.2);
+  b.LessThan(float(FLAGS_N) / 10 * 0.1);
+  b.LessThan(float(FLAGS_N) / 10 * 0.09);
+  b.LessThan(float(FLAGS_N) / 10 * 0.009);
 }
 }  // namespace
 
