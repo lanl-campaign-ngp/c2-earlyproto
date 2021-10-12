@@ -37,6 +37,12 @@ set(c2-tests c2_random_test.cc c2_index_builder_test.cc)
 add_library(c2 ${c2-srcs} ${c2-test-srcs})
 target_link_libraries(c2 fastbit)
 
+add_executable(c2_index_bench c2_index_bench.cc)
+target_link_libraries(c2_index_bench c2)
+if(NOT BUILD_SHARED_LIBS)
+    target_link_libraries(c2_index_bench "-static")
+endif()
+
 foreach(lcv ${c2-tests})
     # use basename as test name
     get_filename_component (id ${lcv} NAME_WE)
