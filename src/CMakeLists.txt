@@ -40,7 +40,6 @@ target_link_libraries(c2 fastbit)
 foreach(lcv ${c2-tests})
     # use basename as test name
     get_filename_component (id ${lcv} NAME_WE)
-
     add_executable(${id} EXCLUDE_FROM_ALL ${lcv})
     target_link_libraries(${id} c2)
     add_test(${id} ${id})
