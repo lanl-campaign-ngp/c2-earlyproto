@@ -32,7 +32,7 @@
 set(c2-srcs c2_slice.cc c2_status.cc c2_coding.cc c2_env.cc c2_io.cc
         c2_io_posix.cc c2_index_builder.cc port_posix.cc)
 set(c2-test-srcs testharness.cc testutil.cc)
-set(c2-tests c2_index_builder_test.cc)
+set(c2-tests c2_random_test.cc c2_index_builder_test.cc)
 
 add_library(c2 ${c2-srcs} ${c2-test-srcs})
 target_link_libraries(c2 fastbit)
