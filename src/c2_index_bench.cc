@@ -93,7 +93,7 @@ void BM_Main(int* const argc, char*** const argv) {
   c2::IndexBench b;
   c2::Random r(301);
   std::vector<float> inputdata;
-  for (int i = 2; i < *argc; i++) {
+  for (int i = 1; i < *argc; i++) {
     int a;
     char junk;
     if (sscanf((*argv)[i], "--n=%d%c", &a, &junk) == 1 ||
