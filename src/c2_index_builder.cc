@@ -47,6 +47,14 @@ IndexBuilder::IndexBuilder(  ///
   assert(nrows == 0);
 }
 
+uint32_t IndexBuilder::MemoryUsage() {
+  uint32_t result = 0;
+  for (size_t i = 0; i < bits.size(); i++) {
+    result += bits[i]->bytes();
+  }
+  return result;
+}
+
 Status IndexBuilder::Finish() {
   Status status;
   assert(nobs == bits.size());

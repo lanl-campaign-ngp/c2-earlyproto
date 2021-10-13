@@ -78,6 +78,8 @@ class IndexBench {
     bu->print(std::cerr);
     uint64_t d = env::CurrentMicros() - begin;
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
+    fprintf(stderr, "== Index size: %llu B\n",
+            static_cast<unsigned long long>(bu->MemoryUsage()));
   }
 
   void LessThan(const std::vector<float>& inputdata, float a) {
