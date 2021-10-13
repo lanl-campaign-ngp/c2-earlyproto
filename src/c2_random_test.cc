@@ -52,6 +52,19 @@ TEST(RandomTest, Uniform) {
   }
 }
 
+TEST(RandomTest, Skewed) {
+  int histo[64];
+  memset(histo, 0, sizeof(histo));
+  Random rnd(301);
+  for (int i = 0; i < 10000; i++) {
+    histo[rnd.Skewed(6)]++;
+  }
+  fprintf(stderr, "== Results\n");
+  for (int i = 0; i < 64; i++) {
+    fprintf(stderr, "%d:\t%d\n", i, histo[i]);
+  }
+}
+
 TEST(RandomTest, Range) {
   int histo[100];
   memset(histo, 0, sizeof(histo));
