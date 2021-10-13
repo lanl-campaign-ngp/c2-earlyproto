@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <vector>
 
-static int FLAGS_n = 10000000;  // Number of keys
+static int FLAGS_n = 100;  // Number of keys
 
 static int FLAGS_value_min = 100;
 
@@ -78,14 +78,21 @@ class IndexBench {
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
   }
 
-  void LessThan(float a) {
+  void LessThan(const std::vector<float>& inputdata, float a) {
     ibis::bitvector results;
     ibis::qContinuousRange r("var0", ibis::qExpr::OP_LT, a);
     uint64_t begin = env::CurrentMicros();
-    bu->evaluate(r, results);
+    long h = bu->evaluate(r, results);
     uint64_t d = env::CurrentMicros() - begin;
-    fprintf(stderr, "== Query evaluated in %.3f s\n",
-            double(d) / 1000.0 / 1000.0);
+    fprintf(stderr, "== Query evaluated in %.3f s: hits=%ld\n",
+            double(d) / 1000.0 / 1000.0, h);
+#ifndef NDEBUG
+    for (int i = 0; i < results.size(); i++) {
+      if (results.getBit(i) && inputdata[i] >= a) {
+        abort();
+      }
+    }
+#endif
   }
 };
 
@@ -104,12 +111,13 @@ void BM_Main(int* const argc, char*** const argv) {
   inputdata.reserve(FLAGS_n);
   for (int i = 0; i < FLAGS_n; i++) {
     inputdata.push_back(
-        float(FLAGS_value_min +
-            double(FLAGS_value_max - FLAGS_value_min) * r.Next() / INT32_MAX));
+        float(FLAGS_value_min + double(FLAGS_value_max - FLAGS_value_min) *
+                                    r.Next() / INT32_MAX));
   }
   b.Build(inputdata);
   for (int i = 1; i < 10; i++) {
-    b.LessThan(float(FLAGS_value_min +
+    b.LessThan(inputdata,
+               float(FLAGS_value_min +
                      double(FLAGS_value_max - FLAGS_value_min) * i / 10));
   }
 }
