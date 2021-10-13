@@ -39,6 +39,8 @@
 #include <stdio.h>
 #include <vector>
 
+static int FLAGS_key_skewed = 0;
+
 static int FLAGS_n = 100;  // Number of keys
 
 static int FLAGS_value_min = 100;
@@ -103,22 +105,29 @@ void BM_Main(int* const argc, char*** const argv) {
   for (int i = 1; i < *argc; i++) {
     int a;
     char junk;
-    if (sscanf((*argv)[i], "--n=%d%c", &a, &junk) == 1 ||
-        sscanf((*argv)[i], "-n=%d%c", &a, &junk) == 1) {
+    if (sscanf((*argv)[i], "--skewed=%d%c", &a, &junk) == 1) {
+      FLAGS_key_skewed = a;
+    } else if (sscanf((*argv)[i], "-n=%d%c", &a, &junk) == 1) {
       FLAGS_n = a;
     }
   }
   inputdata.reserve(FLAGS_n);
   for (int i = 0; i < FLAGS_n; i++) {
-    inputdata.push_back(
-        float(FLAGS_value_min + double(FLAGS_value_max - FLAGS_value_min) *
-                                    r.Next() / INT32_MAX));
+    if (!FLAGS_key_skewed) {
+      inputdata.push_back(FLAGS_value_min +
+                          double(FLAGS_value_max - FLAGS_value_min) * r.Next() /
+                              INT32_MAX);
+    } else {
+      inputdata.push_back(FLAGS_value_min +
+                          double(FLAGS_value_max - FLAGS_value_min) *
+                              r.Skewed(20) / (1 << 20));
+    }
   }
   b.Build(inputdata);
   for (int i = 1; i < 10; i++) {
-    b.LessThan(inputdata,
-               float(FLAGS_value_min +
-                     double(FLAGS_value_max - FLAGS_value_min) * i / 10));
+    b.LessThan(
+        inputdata,
+        FLAGS_value_min + double(FLAGS_value_max - FLAGS_value_min) * i / 10);
   }
 }
 
