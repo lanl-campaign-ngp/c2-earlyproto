@@ -53,7 +53,8 @@ class IndexBuilder : public ibis::bin {
 
   template <typename T>
   void TEST_BuildIndexes(const std::vector<T>& data);
-  uint32_t MemoryUsage();
+  uint32_t DiskStorageUsage() const;
+  uint32_t MemoryUsage() const;
   void Reset() { clear(); }
   Status Finish();
 
@@ -69,10 +70,10 @@ class IndexBuilder : public ibis::bin {
 template <typename T>
 void IndexBuilder::TEST_BuildIndexes(const std::vector<T>& in) {
   ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
-  //construct(arr);
+  // construct(arr);
   granuleMap gmap;
   mapGranules(arr, gmap);
- //printGranules(std::cerr, gmap);
+  // printGranules(std::cerr, gmap);
   convertGranules(gmap);
   nrows = arr.size();
 }

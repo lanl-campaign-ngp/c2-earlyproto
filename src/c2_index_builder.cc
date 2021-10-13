@@ -47,7 +47,15 @@ IndexBuilder::IndexBuilder(  ///
   assert(nrows == 0);
 }
 
-uint32_t IndexBuilder::MemoryUsage() {
+uint32_t IndexBuilder::DiskStorageUsage() const {
+  uint32_t result = 0;
+  for (size_t i = 0; i < bits.size(); i++) {
+    result += bits[i]->getSerialSize();
+  }
+  return result;
+}
+
+uint32_t IndexBuilder::MemoryUsage() const {
   uint32_t result = 0;
   for (size_t i = 0; i < bits.size(); i++) {
     result += bits[i]->bytes();
