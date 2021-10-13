@@ -80,8 +80,19 @@ class IndexBench {
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
     fprintf(stderr, "== Disk storage size: %llu B\n",
             static_cast<unsigned long long>(bu->DiskStorageUsage()));
-    fprintf(stderr, "== Memory size: %llu B\n",
+    fprintf(stderr, "== Memory: %llu B\n",
             static_cast<unsigned long long>(bu->MemoryUsage()));
+#ifndef NDEBUG
+    size_t i = 0;
+    fprintf(stderr, "== Bitmap sizes:\n");
+    for (; i < bu->NumBitVectors(); i++) {
+      fprintf(stderr, "%d\n", bu->MemoryUsage(i));
+    }
+    fprintf(stderr, "== Keys:\n");
+    for (i = 0; i < bu->NumBitVectors(); i++) {
+      fprintf(stderr, "%d\n", bu->NumKeys(i));
+    }
+#endif
   }
 
   void LessThan(const std::vector<float>& inputdata, float a) {

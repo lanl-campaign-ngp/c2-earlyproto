@@ -54,6 +54,9 @@ class IndexBuilder : public ibis::bin {
   template <typename T>
   void TEST_BuildIndexes(const std::vector<T>& data);
   uint32_t DiskStorageUsage() const;
+  uint32_t NumBitVectors() const { return nobs; }
+  uint32_t NumKeys(size_t i) const { return bits[i]->cnt(); }
+  uint32_t MemoryUsage(size_t i) const { return bits[i]->bytes(); }
   uint32_t MemoryUsage() const;
   void Reset() { clear(); }
   Status Finish();
