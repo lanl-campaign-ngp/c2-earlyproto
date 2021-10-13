@@ -80,11 +80,11 @@ class IndexBench {
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
     fprintf(stderr, "== Disk storage size: %llu B\n",
             static_cast<unsigned long long>(bu->DiskStorageUsage()));
+#ifndef NDEBUG
     fprintf(stderr, "== Memory: %llu B\n",
             static_cast<unsigned long long>(bu->MemoryUsage()));
-#ifndef NDEBUG
     size_t i = 0;
-    fprintf(stderr, "== Bitmap sizes:\n");
+    fprintf(stderr, "== Per-bitmap sizes:\n");
     for (; i < bu->NumBitVectors(); i++) {
       fprintf(stderr, "%d\n", bu->MemoryUsage(i));
     }
