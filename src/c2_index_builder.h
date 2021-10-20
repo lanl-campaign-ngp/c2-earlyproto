@@ -33,6 +33,7 @@
  */
 #pragma once
 
+#include "c2_env.h"
 #include "c2_io.h"
 
 #include <fastbit/ibin.h>
@@ -78,7 +79,10 @@ template <typename T>
 void IndexBuilder::TEST_GranuleBuild(const std::vector<T>& in) {
   ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
   granuleMap gmap;
+  uint64_t a1 = env::CurrentMicros();
   mapGranules(arr, gmap);
+  uint64_t a2 = env::CurrentMicros();
+  fprintf(stderr, "== Map granule: %.3f s\n", double(a2 - a1) / 1000 / 1000);
   // printGranules(std::cerr, gmap);
   convertGranules(gmap);
   nrows = arr.size();
@@ -87,7 +91,10 @@ void IndexBuilder::TEST_GranuleBuild(const std::vector<T>& in) {
 template <typename T>
 void IndexBuilder::TEST_Build(const std::vector<T>& in) {
   ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
+  uint64_t a1 = env::CurrentMicros();
   setBoundaries(arr);
+  uint64_t a2 = env::CurrentMicros();
+  fprintf(stderr, "== Make bounds: %.3f s\n", double(a2 - a1) / 1000 / 1000);
   binning(arr);
 }
 
