@@ -66,7 +66,7 @@ class IndexBuilderBench {
 
   void Build(const std::vector<float>& inputdata) {
     uint64_t begin = env::CurrentMicros();
-    bu->TEST_BuildIndexes(inputdata);
+    bu->TEST_GranuleBuild(inputdata);
     bu->print(std::cerr);
     uint64_t d = env::CurrentMicros() - begin;
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
