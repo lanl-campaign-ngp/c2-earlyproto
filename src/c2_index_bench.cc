@@ -39,12 +39,29 @@
 #include <stdio.h>
 #include <vector>
 
+// Fastbit index construction strategy (0=simple, 1=linear, 2=equal-weight)
+static int FLAGS_fastbit_strategy = 0;
+
+// Number of bins to generate
+static int FLAGS_fastbit_nbins = 180;
+
+// Use granule mapping for index construction instead of regular binning.
+// Ignores FLAGS_fastbit_strategy and FLAGS_fastbit_nbins
+static int FLAGS_fastbit_granule = 0;
+
+// Index precision for granule mapping
+static int FLAGS_fastbit_granule_precision = 2;
+
+// Use a skewed key distribution rather than a uniform distribution
 static int FLAGS_key_skewed = 0;
 
+// Number of keys to generate
 static int FLAGS_n = 100;  // Number of keys
 
+// Lower bound of the value space
 static int FLAGS_value_min = 100;
 
+// Upper bound of the value space
 static int FLAGS_value_max = 1000;
 
 namespace c2 {
@@ -74,12 +91,22 @@ class IndexBench {
 
   void Build(const std::vector<float>& inputdata) {
     uint64_t begin = env::CurrentMicros();
-    //opts.ibis_col->indexSpec("<binning precision=2 />");
-   // bu->TEST_GranuleBuild(inputdata);
-    opts.ibis_col->indexSpec("<binning nbins=180 scale=simple />");
-     bu->TEST_Build(inputdata);
-    bu->print(std::cerr);
+    const char* binning_strategy[] = {"scale=simple", "scale=linear",
+                                      "equal-weight"};
+    char index_spec[100];
+    if (FLAGS_fastbit_granule) {
+      snprintf(index_spec, sizeof(index_spec), "<binning precision=%d />",
+               FLAGS_fastbit_granule_precision);
+      opts.ibis_col->indexSpec(index_spec);
+      bu->TEST_GranuleBuild(inputdata);
+    } else {
+      snprintf(index_spec, sizeof(index_spec), "<binning nbins=%d %s />",
+               FLAGS_fastbit_nbins, binning_strategy[FLAGS_fastbit_strategy]);
+      opts.ibis_col->indexSpec(index_spec);
+      bu->TEST_Build(inputdata);
+    }
     uint64_t d = env::CurrentMicros() - begin;
+    bu->print(std::cerr);
     bu->Finish();
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
     fprintf(stderr, "== Disk storage size: %llu B\n",
