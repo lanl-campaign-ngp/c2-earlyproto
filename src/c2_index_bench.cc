@@ -39,6 +39,9 @@
 #include <stdio.h>
 #include <vector>
 
+// Fastbit verbose level
+static int FLAGS_fastbit_v = 0;
+
 // Fastbit index construction strategy (0=simple, 1=linear, 2=equal-weight)
 static int FLAGS_fastbit_strategy = 0;
 
@@ -73,7 +76,7 @@ class IndexBench {
   std::string tmpdir;
 
   IndexBench() : bu(NULL) {
-    ibis::gVerbose = 5;
+    ibis::gVerbose = FLAGS_fastbit_v;
     IO::Default()->GetTestDirectory(&tmpdir);
     tmpdir += "/index_builder_test";
     IO::Default()->CreateDir(tmpdir.c_str());
@@ -146,7 +149,6 @@ class IndexBench {
 };
 
 void BM_Main(int* const argc, char*** const argv) {
-  c2::IndexBench b;
   c2::Random r(301);
   std::vector<float> inputdata;
   for (int i = 1; i < *argc; i++) {
@@ -162,6 +164,8 @@ void BM_Main(int* const argc, char*** const argv) {
       FLAGS_fastbit_granule = a;
     } else if (sscanf((*argv)[i], "--skewed=%d%c", &a, &junk) == 1) {
       FLAGS_key_skewed = a;
+    } else if (sscanf((*argv)[i], "-v=%d%c", &a, &junk) == 1) {
+      FLAGS_fastbit_v = a;
     } else if (sscanf((*argv)[i], "-n=%d%c", &a, &junk) == 1) {
       FLAGS_n = a;
     }
@@ -182,6 +186,7 @@ void BM_Main(int* const argc, char*** const argv) {
                               r.Skewed(20) / (1 << 20));
     }
   }
+  c2::IndexBench b;
   b.Build(inputdata);
   for (int i = 1; i < 0; i++) {
     b.LessThan(
