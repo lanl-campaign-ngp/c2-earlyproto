@@ -109,6 +109,7 @@ class IndexBench {
     bu->print(std::cerr);
     bu->Finish();
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
+    fprintf(stderr, "== Spec: %s\n", index_spec);
     fprintf(stderr, "== Disk storage size: %llu B\n",
             static_cast<unsigned long long>(bu->DiskStorageUsage()));
 #ifndef NDEBUG
@@ -151,12 +152,23 @@ void BM_Main(int* const argc, char*** const argv) {
   for (int i = 1; i < *argc; i++) {
     int a;
     char junk;
-    if (sscanf((*argv)[i], "--skewed=%d%c", &a, &junk) == 1) {
+    if (sscanf((*argv)[i], "--nbins=%d%c", &a, &junk) == 1) {
+      FLAGS_fastbit_nbins = a;
+    } else if (sscanf((*argv)[i], "--strategy=%d%c", &a, &junk) == 1) {
+      FLAGS_fastbit_strategy = a;
+    } else if (sscanf((*argv)[i], "--granule-precision=%d%c", &a, &junk) == 1) {
+      FLAGS_fastbit_granule_precision = a;
+    } else if (sscanf((*argv)[i], "--granule=%d%c", &a, &junk) == 1) {
+      FLAGS_fastbit_granule = a;
+    } else if (sscanf((*argv)[i], "--skewed=%d%c", &a, &junk) == 1) {
       FLAGS_key_skewed = a;
     } else if (sscanf((*argv)[i], "-n=%d%c", &a, &junk) == 1) {
       FLAGS_n = a;
     }
   }
+  fprintf(stderr, "== Value space: [%d, %d]\n", FLAGS_value_min,
+          FLAGS_value_max);
+  fprintf(stderr, "== Skewed: %d\n", FLAGS_key_skewed);
   inputdata.reserve(FLAGS_n);
   for (int i = 0; i < FLAGS_n; i++) {
     if (!FLAGS_key_skewed) {
