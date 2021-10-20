@@ -52,11 +52,15 @@ class IndexBuilder : public ibis::bin {
   ~IndexBuilder();
 
   template <typename T>
-  void TEST_BuildIndexes(const std::vector<T>& data);
+  void TEST_GranuleBuild(const std::vector<T>& data);
+  template <typename T>
+  void TEST_Build(const std::vector<T>& data);
   uint32_t DiskStorageUsage() const;
   uint32_t NumBitVectors() const { return nobs; }
-  uint32_t NumKeys(size_t i) const { return bits[i]->cnt(); }
-  uint32_t MemoryUsage(size_t i) const { return bits[i]->bytes(); }
+  uint32_t NumKeys(size_t i) const { return bits[i] ? bits[i]->cnt() : 0; }
+  uint32_t MemoryUsage(size_t i) const {
+    return bits[i] ? bits[i]->bytes() : 0;
+  }
   uint32_t MemoryUsage() const;
   void Reset() { clear(); }
   Status Finish();
@@ -71,14 +75,20 @@ class IndexBuilder : public ibis::bin {
 };
 
 template <typename T>
-void IndexBuilder::TEST_BuildIndexes(const std::vector<T>& in) {
+void IndexBuilder::TEST_GranuleBuild(const std::vector<T>& in) {
   ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
-  // construct(arr);
   granuleMap gmap;
   mapGranules(arr, gmap);
   // printGranules(std::cerr, gmap);
   convertGranules(gmap);
   nrows = arr.size();
+}
+
+template <typename T>
+void IndexBuilder::TEST_Build(const std::vector<T>& in) {
+  ibis::array_t<T> arr(const_cast<T*>(in.data()), in.size());
+  setBoundaries(arr);
+  binning(arr);
 }
 
 }  // namespace c2

@@ -50,7 +50,9 @@ IndexBuilder::IndexBuilder(  ///
 uint32_t IndexBuilder::DiskStorageUsage() const {
   uint32_t result = 0;
   for (size_t i = 0; i < bits.size(); i++) {
-    result += bits[i]->getSerialSize();
+    if (bits[i]) {
+      result += bits[i]->getSerialSize();
+    }
   }
   return result;
 }
@@ -58,7 +60,9 @@ uint32_t IndexBuilder::DiskStorageUsage() const {
 uint32_t IndexBuilder::MemoryUsage() const {
   uint32_t result = 0;
   for (size_t i = 0; i < bits.size(); i++) {
-    result += bits[i]->bytes();
+    if (bits[i]) {
+      result += bits[i]->bytes();
+    }
   }
   return result;
 }
@@ -66,7 +70,7 @@ uint32_t IndexBuilder::MemoryUsage() const {
 Status IndexBuilder::Finish() {
   Status status;
   assert(nobs == bits.size());
-  assert(offset64.size() == (nobs ? nobs + 1 : 0));
+  // assert(offset64.size() == (nobs ? nobs + 1 : 0));
   assert(bounds.size() == nobs);
   assert(minval.size() == nobs);
   assert(maxval.size() == nobs);

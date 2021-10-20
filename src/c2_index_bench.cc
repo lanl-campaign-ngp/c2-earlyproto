@@ -74,9 +74,13 @@ class IndexBench {
 
   void Build(const std::vector<float>& inputdata) {
     uint64_t begin = env::CurrentMicros();
-    bu->TEST_BuildIndexes(inputdata);
+    //opts.ibis_col->indexSpec("<binning precision=2 />");
+   // bu->TEST_GranuleBuild(inputdata);
+    opts.ibis_col->indexSpec("<binning nbins=180 scale=simple />");
+     bu->TEST_Build(inputdata);
     bu->print(std::cerr);
     uint64_t d = env::CurrentMicros() - begin;
+    bu->Finish();
     fprintf(stderr, "== Index built in %.3f s\n", double(d) / 1000.0 / 1000.0);
     fprintf(stderr, "== Disk storage size: %llu B\n",
             static_cast<unsigned long long>(bu->DiskStorageUsage()));
@@ -139,7 +143,7 @@ void BM_Main(int* const argc, char*** const argv) {
     }
   }
   b.Build(inputdata);
-  for (int i = 1; i < 10; i++) {
+  for (int i = 1; i < 0; i++) {
     b.LessThan(
         inputdata,
         FLAGS_value_min + double(FLAGS_value_max - FLAGS_value_min) * i / 10);
