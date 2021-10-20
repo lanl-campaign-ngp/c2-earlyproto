@@ -166,6 +166,7 @@ void BM_Main(int* const argc, char*** const argv) {
       FLAGS_n = a;
     }
   }
+  fprintf(stderr, "== Num rows: %d\n", FLAGS_n);
   fprintf(stderr, "== Value space: [%d, %d]\n", FLAGS_value_min,
           FLAGS_value_max);
   fprintf(stderr, "== Skewed: %d\n", FLAGS_key_skewed);
