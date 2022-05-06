@@ -28,7 +28,7 @@ We focus on Linux at the moment.
 
 # Software requirements
 
-Compiling C2 currently requires g++, cmake, and make. The included FastBit benchmark additionally requires an installation of FastBit. On Ubuntu, one may use the following commands to prepare the programming environment for C2. To build and install FastBit, see our companion codebase [c2-fastbit](https://github.com/lanl-future-campaign/c2-fastbit).
+Compiling C2 currently requires g++, cmake, and make. The included FastBit benchmark requires an installation of FastBit. On Ubuntu, one may use the following commands to prepare the programming environment for C2. To build and install FastBit, see our companion codebase [c2-fastbit](https://github.com/lanl-future-campaign/c2-fastbit). When configuring FastBit, make sure to set `BUILD_SHARED_LIBS` to `OFF` so that a `libfastbit.a` is built instead of a `libfastbit.so`. We will configure C2 to statically link with this `libfastbit.a`.
 
 ```bash
 sudo apt-get install g++ make cmake cmake-curses-gui
@@ -38,7 +38,7 @@ For Ubuntu 20.04.4, this will install g++ 9.4.0, cmake 3.16.3, and make 4.2.1.
 
 # Building
 
-After all software requirements are installed, use the following to configure and build c2.
+After all software requirements are installed (including FastBit), use the following to configure and build c2.
 
 ```bash
 git clone https://github.com/lanl-future-campaign/c2-earlyproto.git
@@ -48,7 +48,7 @@ cd build
 ccmake -DCMAKE_PREFIX_PATH=<c2_fastbit_installdir> ..
 ```
 
-Type 'c' multiple times and choose suitable options. An example set of options are:
+Type 'c' multiple times and choose the following set of options:
 
 ```bash
 BUILD_SHARED_LIBS                *OFF
@@ -64,3 +64,5 @@ Type 'g' to generate build files and exit cmake. If 'g' is not available, type '
 ```bash
 make
 ```
+
+Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be available at `build/src/c2_index_bench`.
