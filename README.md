@@ -71,12 +71,16 @@ Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be availabl
 
 # c2_index_bench Options
 
-| Options             | Description                                                                                               |
-|---------------------|-----------------------------------------------------------------------------------------------------------|
-| --n                 | Number of keys (doubles) to generate                                                                      |
-| --skewed            | Whether the generated keys should form a uniform distribution or skewed                                   |
-| --strategy          | Which fastbit binning strategy to use (0: simple, 1: linear, 2: equal-weight)                             |
-| --nbins             | Number of bins to generate                                                                                |
-| --granule           | If the `precision reduction` binning strategy should be used instead of the one specified in `--strategy` |
-| --granule-precision | Number of precisions to preserve when `--granule` is ON (set to 1)                                        |
-| --v                 | Verbose level for fastbit                                                                                 |
+| Options             | Description                                                                                                  |
+|---------------------|--------------------------------------------------------------------------------------------------------------|
+| -n                  | Number of keys (doubles) to generate                                                                         |
+| --skewed            | Whether the generated keys should form a uniform distribution or skewed                                      |
+| --strategy          | Which fastbit binning strategy to use (0: simple, 1: linear, 2: equal-weight)                                |
+| --nbins             | Number of bins to generate                                                                                   |
+| --granule           | If the `precision reduction` binning strategy should be used instead of the one specified in `--strategy`    |
+| --granule-precision | Number of precisions to preserve when `--granule` is ON (set to 1)                                           |
+| -v                  | Verbose level for fastbit                                                                                    |
+
+**Example**: `./c2_index_bench --granule=1 -n=10000000`.
+
+This will use the `precision reduction` binning strategy (fastbit default) to build indexes on 10M keys generated using a uniform distribution. The precision level will be set at 2 (fastbit default) and the verbose level will be set at 0 (minimal prints).
