@@ -61,7 +61,7 @@ CMAKE_SKIP_RPATH                 ON
 fastbit_DIR                      /tmp/usr/local/share/cmake/fastbit
 ```
 
-Type 'g' to generate build files and exit cmake. If 'g' is unavailable, type 'c' multiple times until 'g' appears. Once this is done, run `make` to build all targets. We want to statically link everything. For this make sure to set `BUILD_SHARED_LIBS` to `OFF`, `CMAKE_EXE_LINKER_FLAGS` to `-static`, and `CMAKE_SKIP_RPATH` to `ON`. Note that in the above example, we had assumed that FastBit was installed to `/tmp/usr/local` so `CMAKE_PREFIX_PATH` was set to match that location.
+Type 'g' to generate build files and exit cmake. If 'g' is unavailable, type 'c' multiple times until 'g' appears. Once this is done, run `make` to build all targets. We want to statically link everything. For this make sure to set `BUILD_SHARED_LIBS` to `OFF`, `CMAKE_EXE_LINKER_FLAGS` to `-static`, and `CMAKE_SKIP_RPATH` to `ON`. Note that in the above example, we had assumed that FastBit was installed to `/tmp/usr/local` so `CMAKE_PREFIX_PATH` was set accordingly. With an appropriate `CMAKE_PREFIX_PATH`, `fastbit_DIR` will be populated automatically by cmake to indicate that it has successfully found a FastBit installation.
 
 ```bash
 make
