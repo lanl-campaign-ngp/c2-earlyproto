@@ -51,18 +51,20 @@ ccmake -DCMAKE_PREFIX_PATH=<c2_fastbit_installdir> ..
 Type 'c' multiple times and choose the following set of options:
 
 ```bash
-BUILD_SHARED_LIBS                *OFF
-BUILD_TESTS                      *OFF
-CMAKE_BUILD_TYPE                 *Release
-CMAKE_INSTALL_PREFIX             */tmp/usr/local
-CMAKE_PREFIX_PATH                */tmp/usr/local
-fastbit_DIR                      */tmp/usr/local/share/cmake/fastbit
+BUILD_SHARED_LIBS                OFF
+BUILD_TESTS                      OFF
+CMAKE_BUILD_TYPE                 Release
+CMAKE_EXE_LINKER_FLAGS           -static
+CMAKE_INSTALL_PREFIX             /tmp/usr/local
+CMAKE_PREFIX_PATH                /tmp/usr/local
+CMAKE_SKIP_RPATH                 ON
+fastbit_DIR                      /tmp/usr/local/share/cmake/fastbit
 ```
 
-Type 'g' to generate build files and exit cmake. If 'g' is not available, type 'c' multiple times until 'g' appears. Once this is done, run `make` to build all targets.
+Type 'g' to generate build files and exit cmake. If 'g' is unavailable, type 'c' multiple times until 'g' appears. Once this is done, run `make` to build all targets. Our goal is to enforce static linkage for everything, make sure to set `BUILD_SHARED_LIBS` to `OFF`, `CMAKE_EXE_LINKER_FLAGS` to `-static`, and `CMAKE_SKIP_RPATH` to `ON`.
 
 ```bash
 make
 ```
 
-Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be available at `build/src/c2_index_bench`.
+Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be available at `build/src/c2_index_bench`, which won't have any dynamic dependencies.

@@ -41,6 +41,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
             "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 endif()
+mark_as_advanced(CLEAR CMAKE_SKIP_RPATH CMAKE_EXE_LINKER_FLAGS)
 set(BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 set(BUILD_TESTS "OFF" CACHE BOOL "Build test programs")
 # CMAKE_CXX_STANDARD is not defined until cmake 3.1, and will be ignored by
