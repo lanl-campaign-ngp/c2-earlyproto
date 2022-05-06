@@ -188,7 +188,7 @@ void BM_Main(int* const argc, char*** const argv) {
   }
   c2::IndexBench b;
   b.Build(inputdata);
-  for (int i = 1; i < 0; i++) {
+  for (int i = 0; i <= 10; i++) {
     b.LessThan(
         inputdata,
         FLAGS_value_min + double(FLAGS_value_max - FLAGS_value_min) * i / 10);
