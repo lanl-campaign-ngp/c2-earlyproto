@@ -83,4 +83,26 @@ Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be availabl
 
 **Example**: `./c2_index_bench --granule=1 -n=10000000`.
 
-This will use the `precision reduction` binning strategy (fastbit default) to build indexes on 10M keys generated using a uniform distribution. The precision level will be set at 2 (fastbit default) and the verbose level will be set at 0 (minimal prints).
+This will use the `precision reduction` binning strategy (fastbit default) to build indexes on 10M keys generated using a uniform distribution. The precision level will be set at 2 (fastbit default) and the verbose level will be set at 0 (minimal prints). Eleven (11) queries will be run. Each targets 0%, 10%, 20%, ..., and 100% of keys.
+
+# c2_index_bench Results
+
+Results for a `./c2_index_bench --granule=1 -n=10000000` run on different platforms.
+
+|                    | System A                         | System B       |
+|--------------------|----------------------------------|----------------|
+| CPU                | AMD EPYC 7502 32-Core Processor  | ARM Cortex-A53 |
+| FastBit Index Time | 1.704s                           | 8.728s         |
+| Query (0%)         | 0.000s                           | 0.000s         |
+| Query (10%)        | 0.005s                           | 0.044s         |
+| Query (20%)        | 0.009s                           | 0.080s         |
+| Query (30%)        | 0.013s                           | 0.114s         |
+| Query (40%)        | 0.017s                           | 0.149s         |
+| Query (50%)        | 0.021s                           | 0.187s         |
+| Query (60%)        | 0.016s                           | 0.150s         |
+| Query (70%)        | 0.013s                           | 0.115s         |
+| Query (80%)        | 0.009s                           | 0.080s         |
+| Query (90%)        | 0.005s                           | 0.044s         |
+| Query (100%)       | 0.000s                           | 0.000s         |
+
+Thanks!
