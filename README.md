@@ -87,22 +87,23 @@ This will use the `precision reduction` binning strategy (fastbit default) to bu
 
 # c2_index_bench Results
 
-Results for a `./c2_index_bench --granule=1 -n=10000000` run on different platforms.
+Results for a `./c2_index_bench --granule=1 -n=10000000` run on different platforms. All runs used a single CPU core.
 
-|                    | System A                         | System B       |
-|--------------------|----------------------------------|----------------|
-| CPU                | AMD EPYC 7502 32-Core Processor  | ARM Cortex-A53 |
-| FastBit Index Time | 1.704s                           | 8.728s         |
-| Query (0%)         | 0.000s                           | 0.000s         |
-| Query (10%)        | 0.005s                           | 0.044s         |
-| Query (20%)        | 0.009s                           | 0.080s         |
-| Query (30%)        | 0.013s                           | 0.114s         |
-| Query (40%)        | 0.017s                           | 0.149s         |
-| Query (50%)        | 0.021s                           | 0.187s         |
-| Query (60%)        | 0.016s                           | 0.150s         |
-| Query (70%)        | 0.013s                           | 0.115s         |
-| Query (80%)        | 0.009s                           | 0.080s         |
-| Query (90%)        | 0.005s                           | 0.044s         |
-| Query (100%)       | 0.000s                           | 0.000s         |
+|                    | System A                        | System B       |
+|--------------------|---------------------------------|----------------|
+| CPU                | AMD EPYC 7502 32-Core Processor | ARM Cortex-A53 |
+| Compiler           | GCC 8.4.1                       | GCC 10.2.1     |
+| FastBit Index Time | 1.704s                          | 8.728s         |
+| Query (0%)         | 0.000s                          | 0.000s         |
+| Query (10%)        | 0.005s                          | 0.044s         |
+| Query (20%)        | 0.009s                          | 0.080s         |
+| Query (30%)        | 0.013s                          | 0.114s         |
+| Query (40%)        | 0.017s                          | 0.149s         |
+| Query (50%)        | 0.021s                          | 0.187s         |
+| Query (60%)        | 0.016s                          | 0.150s         |
+| Query (70%)        | 0.013s                          | 0.115s         |
+| Query (80%)        | 0.009s                          | 0.080s         |
+| Query (90%)        | 0.005s                          | 0.044s         |
+| Query (100%)       | 0.000s                          | 0.000s         |
 
 Thanks!
