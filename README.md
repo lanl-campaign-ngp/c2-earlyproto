@@ -81,9 +81,13 @@ Once `make` completes, the FastBit benchmark, `c2_index_bench`, will be availabl
 | --granule-precision | Number of precisions to preserve when `--granule` is ON (set to 1)                                           |
 | -v                  | Verbose level for fastbit                                                                                    |
 
-**Example**: `./c2_index_bench --granule=1 -n=10000000`.
+**Example 1**: `./c2_index_bench --granule=1 -n=10000000`.
 
 This will use the `precision reduction` binning strategy (fastbit default) to build indexes on 10M keys generated using a uniform distribution. The precision level will be set at 2 (fastbit default) and the verbose level will be set at 0 (minimal prints). Eleven (11) queries will be run. Each targets 0%, 10%, 20%, ..., and 100% of keys.
+
+**Example 2**: `./c2_index_bench --strategy=1 -n=10000000`.
+
+This will use the `linear` binning strategy which tends to be less CPU intensive in index construction than the `precision reduction` used above. One disadvantage of using the `linear` strategy is that the bin boundaries may not align perfect with the queries, resulting in potentially additional data scans.
 
 # c2_index_bench Results
 
@@ -104,6 +108,25 @@ Results for a `./c2_index_bench --granule=1 -n=10000000` run on different platfo
 | Query (70%)        | 0.013s                          | 0.115s         |
 | Query (80%)        | 0.009s                          | 0.080s         |
 | Query (90%)        | 0.005s                          | 0.044s         |
+| Query (100%)       | 0.000s                          | 0.000s         |
+
+Results for a `./c2_index_bench --strategy=1 -n=10000000` run on different platforms. Again, all runs used a single CPU core.
+
+|                    | System A                        | System B       |
+|--------------------|---------------------------------|----------------|
+| CPU                | AMD EPYC 7502 32-Core Processor | ARM Cortex-A53 |
+| Compiler           | GCC 8.4.1                       | GCC 10.2.1     |
+| FastBit Index Time | 0.799s                          | 4.741s         |
+| Query (0%)         | 0.000s                          | 0.000s         |
+| Query (10%)        | 0.005s                          | 0.043s         |
+| Query (20%)        | 0.009s                          | 0.078s         |
+| Query (30%)        | 0.013s                          | 0.113s         |
+| Query (40%)        | 0.017s                          | 0.149s         |
+| Query (50%)        | 0.021s                          | 0.186s         |
+| Query (60%)        | 0.017s                          | 0.150s         |
+| Query (70%)        | 0.013s                          | 0.115s         |
+| Query (80%)        | 0.009s                          | 0.079s         |
+| Query (90%)        | 0.005s                          | 0.043s         |
 | Query (100%)       | 0.000s                          | 0.000s         |
 
 Thanks!
